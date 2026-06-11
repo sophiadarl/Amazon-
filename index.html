@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Your Orders - Amazon</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,'Amazon Ember','Helvetica Neue',Arial,sans-serif;background:#f3f3f3;color:#0f1111;font-size:14px;}
+a{color:#007185;text-decoration:none;}
+a:hover{text-decoration:underline;color:#c7511f;}
+
+/* HEADER */
+.header{background:#131921;padding:0;position:sticky;top:0;z-index:100;}
+.header-main{display:flex;align-items:center;gap:8px;padding:8px 12px;}
+.logo{color:white;font-size:22px;font-weight:700;letter-spacing:-0.5px;line-height:1;}
+.logo span{color:#ff9900;}
+.header-addr{flex:1;background:#3b4149;border-radius:4px;padding:6px 10px;color:#ccc;font-size:11px;display:flex;align-items:center;gap:6px;}
+.header-addr svg{flex-shrink:0;}
+.cart-icon{color:white;display:flex;align-items:center;gap:2px;font-size:12px;font-weight:700;}
+.cart-count{color:#ff9900;font-size:16px;font-weight:900;line-height:1;}
+.header-nav{background:#232f3e;padding:6px 12px;display:flex;align-items:center;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.header-nav::-webkit-scrollbar{display:none;}
+.nav-link{color:white;font-size:12px;white-space:nowrap;padding:4px 0;}
+
+/* BREADCRUMB */
+.breadcrumb{padding:10px 12px;font-size:12px;color:#565959;border-bottom:1px solid #ddd;background:white;}
+.breadcrumb a{color:#007185;}
+
+/* PAGE */
+.page{max-width:800px;margin:0 auto;padding:12px;}
+
+.page-title{font-size:20px;font-weight:400;margin-bottom:16px;}
+
+/* DELAY BANNER */
+.delay-banner{background:#fff8e6;border:1px solid #ffa500;border-radius:8px;padding:14px 16px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start;}
+.delay-icon{font-size:20px;flex-shrink:0;margin-top:1px;}
+.delay-title{font-size:14px;font-weight:700;color:#c45500;margin-bottom:3px;}
+.delay-sub{font-size:13px;color:#565959;line-height:1.5;}
+
+/* ORDER CARD */
+.order-card{background:white;border:1px solid #d5d9d9;border-radius:8px;overflow:hidden;margin-bottom:16px;}
+.order-header{background:#f0f2f2;border-bottom:1px solid #d5d9d9;padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:flex-start;}
+.order-meta-grid{display:flex;gap:20px;flex-wrap:wrap;}
+.order-meta-item{}
+.order-meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#565959;font-weight:700;margin-bottom:2px;}
+.order-meta-value{font-size:13px;font-weight:600;color:#0f1111;}
+.order-id-section{text-align:right;}
+.order-id-label{font-size:10px;text-transform:uppercase;color:#565959;font-weight:700;margin-bottom:2px;}
+.order-id-value{font-size:11px;color:#0f1111;font-family:monospace;}
+.order-link{font-size:12px;color:#007185;display:block;margin-top:2px;}
+
+/* ORDER BODY */
+.order-body{padding:16px;}
+
+/* STATUS BAR */
+.status-bar{margin-bottom:16px;}
+.status-label{font-size:16px;font-weight:700;color:#c45500;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.status-badge{display:inline-flex;align-items:center;gap:4px;background:#fff3cd;border:1px solid #ffc107;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;color:#856404;}
+.status-dot-orange{width:7px;height:7px;border-radius:50%;background:#ffc107;display:inline-block;}
+.status-sub{font-size:13px;color:#565959;margin-bottom:2px;}
+.status-update{font-size:12px;color:#007185;cursor:pointer;}
+
+/* PROGRESS TRACK */
+.progress-track{display:flex;align-items:center;margin:16px 0;padding:0 4px;}
+.track-step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+.track-step:not(:last-child)::after{content:’’;position:absolute;top:10px;left:50%;width:100%;height:2px;z-index:0;}
+.track-step:not(:last-child).done::after{background:#067D62;}
+.track-step:not(:last-child).delayed::after{background:#ffc107;}
+.track-step:not(:last-child).pending::after{background:#d5d9d9;}
+.track-dot{width:20px;height:20px;border-radius:50%;z-index:1;display:flex;align-items:center;justify-content:center;font-size:10px;margin-bottom:4px;}
+.track-dot.done{background:#067D62;color:white;}
+.track-dot.delayed{background:#ffc107;color:white;font-size:12px;}
+.track-dot.pending{background:#d5d9d9;color:#888;}
+.track-label{font-size:9px;text-align:center;color:#565959;font-weight:500;line-height:1.3;}
+.track-label.active{color:#c45500;font-weight:700;}
+
+/* ITEM */
+.item-row{display:flex;gap:14px;padding:12px 0;border-top:1px solid #f0f2f2;}
+.item-img{width:80px;height:80px;border:1px solid #ddd;border-radius:4px;object-fit:cover;flex-shrink:0;background:#f8f8f8;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.item-img img{width:100%;height:100%;object-fit:contain;padding:4px;}
+.item-info{flex:1;}
+.item-name{font-size:13px;color:#007185;line-height:1.4;margin-bottom:4px;}
+.item-name:hover{color:#c7511f;text-decoration:underline;cursor:pointer;}
+.item-sold{font-size:11px;color:#565959;margin-bottom:4px;}
+.item-price{font-size:14px;font-weight:700;color:#0f1111;margin-bottom:6px;}
+.item-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.item-tag{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:600;}
+.item-tag.prime{background:#00A8E0;color:white;}
+.item-tag.eligible{background:#f0f2f2;color:#565959;border:1px solid #d5d9d9;}
+
+/* ACTIONS */
+.action-row{display:flex;flex-direction:column;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid #f0f2f2;}
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid;text-align:center;width:100%;}
+.btn-yellow{background:linear-gradient(to bottom,#FFD814,#F7CA00);border-color:#FCD200;color:#0f1111;}
+.btn-outline{background:white;border-color:#d5d9d9;color:#0f1111;}
+.btn-ghost{background:none;border:none;color:#007185;font-size:12px;padding:4px 0;cursor:pointer;font-family:inherit;text-align:left;width:auto;}
+
+/* SHIPPING DETAILS */
+.shipping-box{background:#f8f8f8;border:1px solid #e8e8e8;border-radius:6px;padding:12px;margin-top:12px;font-size:12px;color:#0f1111;}
+.shipping-box-title{font-weight:700;margin-bottom:6px;font-size:13px;}
+.shipping-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #eee;}
+.shipping-row:last-child{border-bottom:none;}
+.shipping-key{color:#565959;}
+.shipping-val{font-weight:500;text-align:right;}
+.shipping-val.orange{color:#c45500;font-weight:700;}
+
+/* HELP */
+.help-section{background:white;border:1px solid #d5d9d9;border-radius:8px;padding:14px 16px;margin-bottom:16px;}
+.help-title{font-size:14px;font-weight:700;margin-bottom:10px;}
+.help-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f2f2;cursor:pointer;}
+.help-item:last-child{border-bottom:none;}
+.help-ico{font-size:18px;width:28px;text-align:center;}
+.help-text{font-size:13px;color:#007185;}
+.help-arrow{margin-left:auto;color:#565959;font-size:16px;}
+
+/* FOOTER */
+.footer{background:#232f3e;color:#ccc;padding:16px;text-align:center;font-size:11px;margin-top:20px;}
+.footer a{color:#ccc;}
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+  <div class="header-main">
+    <div class="logo">amazon<span>.</span><span style="font-size:11px;color:#ff9900;vertical-align:super;font-weight:900">co.uk</span></div>
+    <div class="header-addr">
+      <svg width="12" height="14" fill="none" viewBox="0 0 12 14"><path d="M6 0C3.79 0 2 1.79 2 4c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4zm0 5.5C5.17 5.5 4.5 4.83 4.5 4S5.17 2.5 6 2.5 7.5 3.17 7.5 4 6.83 5.5 6 5.5z" fill="#ccc"/></svg>
+      <span>Deliver to Sophia – M20</span>
+    </div>
+    <div class="cart-icon">
+      <svg width="28" height="24" fill="none" viewBox="0 0 28 24"><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.97-1.67L23 6H6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="21" r="1.5" fill="white"/><circle cx="20" cy="21" r="1.5" fill="white"/></svg>
+      <span class="cart-count">0</span>
+    </div>
+  </div>
+  <div class="header-nav">
+    <span class="nav-link" style="font-weight:700;">≡ All</span>
+    <span class="nav-link">Today's Deals</span>
+    <span class="nav-link">Electronics</span>
+    <span class="nav-link">Prime</span>
+    <span class="nav-link">Customer Service</span>
+    <span class="nav-link">Books</span>
+  </div>
+</div>
+
+<!-- BREADCRUMB -->
+
+<div class="breadcrumb">
+  <a href="#">Account</a> › <a href="#">Your Orders</a> › Order Details
+</div>
+
+<div class="page">
+  <div class="page-title">Order Details</div>
+
+  <!-- DELAY BANNER -->
+
+  <div class="delay-banner">
+    <div class="delay-icon">⚠️</div>
+    <div>
+      <div class="delay-title">Your delivery has been delayed</div>
+      <div class="delay-sub">We're sorry, Sophia. Your order is taking longer than expected to arrive. We'll update you as soon as we have more information. No action is needed from you right now.</div>
+    </div>
+  </div>
+
+  <!-- ORDER CARD -->
+
+  <div class="order-card">
+    <div class="order-header">
+      <div class="order-meta-grid">
+        <div class="order-meta-item">
+          <div class="order-meta-label">Order placed</div>
+          <div class="order-meta-value">9 June 2026</div>
+        </div>
+        <div class="order-meta-item">
+          <div class="order-meta-label">Total</div>
+          <div class="order-meta-value">£50.00</div>
+        </div>
+        <div class="order-meta-item">
+          <div class="order-meta-label">Dispatch to</div>
+          <div class="order-meta-value">Sophia Darling</div>
+        </div>
+      </div>
+      <div class="order-id-section">
+        <div class="order-id-label">Order #</div>
+        <div class="order-id-value">202-4817392-6630748</div>
+        <a class="order-link" href="#">View invoice</a>
+      </div>
+    </div>
+
+```
+<div class="order-body">
+
+  <!-- STATUS -->
+  <div class="status-bar">
+    <div class="status-label">
+      Delivery delayed
+      <span class="status-badge"><span class="status-dot-orange"></span> In transit</span>
+    </div>
+    <div class="status-sub">Was due: <strong>Wednesday, 10 June</strong></div>
+    <div class="status-sub" style="color:#c45500;font-weight:600;">New estimated delivery: We'll update you soon</div>
+  </div>
+
+  <!-- PROGRESS TRACK -->
+  <div class="progress-track">
+    <div class="track-step done">
+      <div class="track-dot done">✓</div>
+      <div class="track-label">Order<br>placed</div>
+    </div>
+    <div class="track-step done">
+      <div class="track-dot done">✓</div>
+      <div class="track-label">Payment<br>confirmed</div>
+    </div>
+    <div class="track-step done">
+      <div class="track-dot done">✓</div>
+      <div class="track-label">Dispatched</div>
+    </div>
+    <div class="track-step delayed">
+      <div class="track-dot delayed">!</div>
+      <div class="track-label active">Delayed<br>in transit</div>
+    </div>
+    <div class="track-step pending">
+      <div class="track-dot pending">○</div>
+      <div class="track-label">Delivered</div>
+    </div>
+  </div>
+
+  <!-- ITEM -->
+  <div class="item-row">
+    <div class="item-img">
+      <!-- Trezor SVG illustration -->
+      <svg viewBox="0 0 80 80" width="72" height="72" fill="none">
+        <rect x="20" y="28" width="40" height="34" rx="5" fill="#1B1B1B"/>
+        <rect x="28" y="14" width="24" height="18" rx="4" fill="#1B1B1B"/>
+        <rect x="30" y="16" width="20" height="14" rx="3" fill="#2a2a2a"/>
+        <rect x="24" y="30" width="32" height="22" rx="3" fill="#2a2a2a"/>
+        <rect x="28" y="34" width="24" height="10" rx="2" fill="#0f0f0f"/>
+        <text x="40" y="42" font-size="5" fill="#00d4aa" text-anchor="middle" font-family="monospace" font-weight="700">TREZOR</text>
+        <circle cx="40" cy="54" r="4" fill="#1B1B1B" stroke="#444" stroke-width="1"/>
+        <circle cx="40" cy="54" r="2" fill="#333"/>
+      </svg>
+    </div>
+    <div class="item-info">
+      <div class="item-name">Trezor Model One – Hardware Wallet – The Most Trusted Cold Storage for Bitcoin &amp; Crypto</div>
+      <div class="item-sold">Sold by: Amazon EU S.à r.l.</div>
+      <div class="item-price">£50.00</div>
+      <div class="item-tags">
+        <span class="item-tag prime">prime</span>
+        <span class="item-tag eligible">Returnable until 9 Jul</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHIPPING DETAILS -->
+  <div class="shipping-box">
+    <div class="shipping-box-title">Shipment details</div>
+    <div class="shipping-row"><span class="shipping-key">Carrier</span><span class="shipping-val">Amazon Logistics</span></div>
+    <div class="shipping-row"><span class="shipping-key">Tracking number</span><span class="shipping-val"><a href="#" style="color:#007185;">AML-GB-7749201-884</a></span></div>
+    <div class="shipping-row"><span class="shipping-key">Dispatched</span><span class="shipping-val">10 Jun 2026, 03:14</span></div>
+    <div class="shipping-row"><span class="shipping-key">Last update</span><span class="shipping-val orange">⚠ Carrier delay – 10 Jun, 18:42</span></div>
+    <div class="shipping-row"><span class="shipping-key">Delivering to</span><span class="shipping-val">171A Fog Lane, Manchester M20 6FJ</span></div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="action-row">
+    <button class="btn btn-yellow">Track package</button>
+    <button class="btn btn-outline">Return or replace items</button>
+    <button class="btn btn-outline">Leave seller feedback</button>
+    <button class="btn-ghost">Problem with your order? Get help →</button>
+  </div>
+
+</div>
+```
+
+  </div>
+
+  <!-- HELP -->
+
+  <div class="help-section">
+    <div class="help-title">What would you like to do?</div>
+    <div class="help-item">
+      <div class="help-ico">📦</div>
+      <div class="help-text">Track your package</div>
+      <div class="help-arrow">›</div>
+    </div>
+    <div class="help-item">
+      <div class="help-ico">💬</div>
+      <div class="help-text">Contact Amazon about this order</div>
+      <div class="help-arrow">›</div>
+    </div>
+    <div class="help-item">
+      <div class="help-ico">↩️</div>
+      <div class="help-text">Return or replace items</div>
+      <div class="help-arrow">›</div>
+    </div>
+    <div class="help-item">
+      <div class="help-ico">⭐</div>
+      <div class="help-text">Write a product review</div>
+      <div class="help-arrow">›</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>© 1996–2026 Amazon.com, Inc. or its affiliates</p>
+  <p style="margin-top:6px;"><a href="#">Conditions of Use</a> · <a href="#">Privacy Notice</a> · <a href="#">Cookie Notice</a></p>
+</div>
+
+</body>
+</html>
